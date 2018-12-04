@@ -22,19 +22,7 @@ for iNeuron = 1:length(ttfiles)
     
     % convert sec to ms
     msSpikeOccur = (tsSpikes{1}.T * 1000 );
-    msSpikeOccur = round(msSpikeOccur);
-    
-    %% what is this shit about ignoring spikes?
-    
-    % do not ignore spikes. I need to match raw waveform and spikes
-    % for laser identification, and this makes # of spikes less than
-    % MClustered. Do it later when generating inst_fr.
-    % ignore spikes before task initiation (DAQ start)
-    %     msSpikeOccur = msSpikeOccur(msSpikeOccur > 0);
-    % ignore spikes after task initiation (DAQ end)
-    %     msSpikeOccur = msSpikeOccur(msSpikeOccur < nData);
-    
-    
+    msSpikeOccur = round(msSpikeOccur); 
     data.tsSpikes{iNeuron} = msSpikeOccur;
     
 end
