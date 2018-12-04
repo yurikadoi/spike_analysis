@@ -1,8 +1,18 @@
 %% Part 2: get those spikes then plot them spikes
 % * move this to its own .m file after getting it up and running) *
-
+load('extractedData.mat')
+load('patchLeave_lickspeed.mat')
+load('patchOn_lickspeed.mat')
+load('patchStop_lickspeed.mat')
 % compile list of tetrode files
 ttfiles = dir('TT*');
+
+save_flag=0;
+
+%get general info about the experiment data and mouseID
+currentFolder = pwd;
+folder_date=currentFolder(end-16:end-9);
+mouseID=currentFolder(end-21:end-20);
 
 % get timestamps for each neuron
 for iNeuron = 1:length(ttfiles)
@@ -34,23 +44,35 @@ stops = zeros(length(stopID),1); stops(stopID>10)=1; stops(stopID>15)=2; stops(s
 
 for iNeuron = 1:length(ttfiles)
 %for iNeuron=1:2
-    
     figure;
-    trials2plot=35:1:length(stops);
-    %plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchStop_ts, -2000, 4000, stops)
-    plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOn_didstop_ts(trials2plot), -2000, 4000, stops(trials2plot))
-    %plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchStop_ts(trials2plot), -2000, 4000, stops(trials2plot))
-    
+    trials2plot=1:1:length(stops);
+    plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOn_didstop_ts(trials2plot), -2000, 4000, stops(trials2plot));    
     h=get(gcf,'children');
-    figure_name=['33-111518-MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    figure_name=[mouseID, '-', folder_date  'MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
     
     title(figure_name)
     h(3).XLabel=xlabel('time (sec)');
     h(3).Legend.String = [{'SmNP'},{'SmP'},{'MdNP'},{'MdP'},{'LgNP'},{'LgP'}];
     h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
-    saveas(gcf,[figure_name '.png'])
-    saveas(gcf,[figure_name '.fig'])
+    figure;
+    trials2plot=1:1:length(stops);
+    plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchStop_ts(trials2plot), -2000, 4000, stops(trials2plot));
+    h=get(gcf,'children');
+    figure_name=[mouseID, '-', folder_date  'MClust-PatchStop',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    
+    title(figure_name)
+    h(3).XLabel=xlabel('time (sec)');
+    h(3).Legend.String = [{'SmNP'},{'SmP'},{'MdNP'},{'MdP'},{'LgNP'},{'LgP'}];
+    h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
 end
 
@@ -58,7 +80,7 @@ end
 %%
 % look more closely at some units when desired (alternatively can just change plots
 % above to use subplots w speed, etc to make more comprehensive
-Neurons = [9]; % list neurons based on what their iNeuron # was from 'get timestamps' loop above
+Neurons = [1:length(ttfiles)]; % list neurons based on what their iNeuron # was from 'get timestamps' loop above
 for i=1:length(Neurons)
     iNeuron = Neurons(i);
     
@@ -80,38 +102,44 @@ for i=1:length(Neurons)
     %for trials occuring
     plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOn_didstop_ts(trials2plot), -500, 4000, stops2(trials2plot))
     h=get(gcf,'children');
-    figure_name=['4sec-SmMdLg-33-111718-MClust-patchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    figure_name=['4sec-SmMdLg-', mouseID, '-', folder_date  'MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
     title(figure_name)
     h(3).XLabel=xlabel('time (sec)');
     h(3).Legend.String = [{'Sm'},{'Md'},{'Lg'}];
     h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
-    saveas(gcf,[figure_name '.png'])
-    saveas(gcf,[figure_name '.fig'])
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
     
     
     figure; % same thing but plot longer time window
     plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOn_didstop_ts(trials2plot), -500, 12000, stops2(trials2plot))
     h=get(gcf,'children');
-    figure_name=['12sec-SmMdLg-33-111718-MClust-patchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    figure_name=['12sec-SmMdLg-', mouseID, '-', folder_date  'MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
     title(figure_name)
     h(3).XLabel=xlabel('time (sec)');
     h(3).Legend.String = [{'Sm'},{'Md'},{'Lg'}];
     h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
-    saveas(gcf,[figure_name '.png'])
-    saveas(gcf,[figure_name '.fig'])
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
     % aligned to patch leave time
     figure;
     plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOff1s_ts((trials2plot))-500, -3000, 3000, stops2(trials2plot));
     h=get(gcf,'children');
-    figure_name=['PatchLeave-SmMdLg-33-111718-MClust-patchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    figure_name=['PatchLeave-SmMdLg-', mouseID, '-', folder_date  'MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
     title(figure_name)
     h(3).XLabel=xlabel('time (sec)');
     h(3).Legend.String = [{'Sm'},{'Md'},{'Lg'}];
     h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
-    saveas(gcf,[figure_name '.png'])
-    saveas(gcf,[figure_name '.fig'])
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
     
     figure;
@@ -132,33 +160,35 @@ for i=1:length(Neurons)
     set(sp1,'position',p1);
     plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOn_didstop_ts, -2000, 6000, stops2)
     h=get(gcf,'children');
-    figure_name=['Speed-SmMdLg-33-111718-MClust-patchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
+    figure_name=['Speed-SmMdLg-', mouseID, '-', folder_date  'MClust-PatchOn',ttfiles(iNeuron).name(1:3),'-',ttfiles(iNeuron).name(5:end-4)];
     title(figure_name)
     h(3).XLabel=xlabel('time (sec)');
     h(3).Legend.String = [{'Sm'},{'Md'},{'Lg'}];
     h(3).Legend.Position=[0.1524    0.1072    0.1393    0.2012];
-    saveas(gcf,[figure_name '.png'])
-    saveas(gcf,[figure_name '.fig'])
+    if save_flag==1
+        saveas(gcf,[figure_name '.png'])
+        saveas(gcf,[figure_name '.fig'])
+    end
     
-    
-    % plot aligned to leave time w speed subplot underneath
-    figure;
-    subplot(2,1,2)
-    sp2 = subplot(2,1,2);
-    p2 = get(sp2,'position');
-    p2(4) = p2(4)*(2/3); % reduce height
-    set(sp2, 'position', p2);
-    plot(-meanpatchLeave.speed{4}(1:180000),'b-'); hold on;
-    plot(-meanpatchLeave.speed{2}(1:180000),'g-');
-    plot(-meanpatchLeave.speed{1}(1:180000),'r-');
-    
-    subplot(2,1,1)
-    sp1 = subplot(2,1,1);
-    p1 = get(sp1,'position');
-    p1(2) = p1(2)-(1/3*p1(4));
-    p1(4) = p1(4)*(4/3); % reduce height
-    set(sp1,'position',p1);
-    plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOff1s_ts(patchStopTrue==1)-500, -3000, 3000, stops2);
+%     
+%     % plot aligned to leave time w speed subplot underneath
+%     figure;
+%     subplot(2,1,2)
+%     sp2 = subplot(2,1,2);
+%     p2 = get(sp2,'position');
+%     p2(4) = p2(4)*(2/3); % reduce height
+%     set(sp2, 'position', p2);
+%     plot(-meanpatchLeave.speed{4}(1:180000),'b-'); hold on;
+%     plot(-meanpatchLeave.speed{2}(1:180000),'g-');
+%     plot(-meanpatchLeave.speed{1}(1:180000),'r-');
+%     
+%     subplot(2,1,1)
+%     sp1 = subplot(2,1,1);
+%     p1 = get(sp1,'position');
+%     p1(2) = p1(2)-(1/3*p1(4));
+%     p1(4) = p1(4)*(4/3); % reduce height
+%     set(sp1,'position',p1);
+%     plot_timecourse('timestamp', data.tsSpikes{iNeuron}, patchOff1s_ts(patchStopTrue==1)-500, -3000, 3000, stops2);
 end
 
 
