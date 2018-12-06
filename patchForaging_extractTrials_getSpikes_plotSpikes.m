@@ -64,9 +64,9 @@ while currADC_indx < lastPatchOn
     
     nextPatchOff1s = find(ADC_data{4}(currADC_indx+1:end)<-.5,1)+currADC_indx;
     if isempty(nextPatchOff1s)
-        display('empty')
-        display(nextPatchOn)
-        display(nextpatchOnNull)
+        %display('empty')
+        %display(nextPatchOn)
+        %display(nextpatchOnNull)
     end
     patchOff1s_indx = [patchOff1s_indx nextPatchOff1s];
     
@@ -96,13 +96,14 @@ if length(patchOn_ts) > length(patchOff1s_ts)
     disp('this shit ran')
     patchOn_indx = patchOn_indx(1:end-1);
     patchOn_ts = patchOn_ts(1:end-1);
-    
     if length(patchStop_indx) > length(patchOff1s_ts)
+        disp('TTTTTTTTTTTT')
         patchStop_indx = patchStop_indx(1:end-1);
         patchStop_ts = patchStop_ts(1:end-1);
         patchStopTrue = patchStopTrue(1:length(patchStopTrue(1:end-1)));
         
     end
+    
     
     if length(maxVoltsID) > length(patchOff1s_ts)
         disp('maxvolt shortened')
@@ -187,44 +188,44 @@ patchStopSm_ts = patchStop_ts(stopID>=10 & stopID<20);
 patchStop_ts = patchStop_ts(patchStopTrue==1);
 
 patchStop_speed = patchStop_speed(patchStopTrue==1,:);
-    patchStop_lick = patchStop_lick(patchStopTrue==1,:);
-    
-    meanStop.speed = mean(patchStop_speed(patchStopTrue==1,:));
-    meanStop.lick = mean(patchStop_lick(patchStopTrue==1,:));
-    
-    patchStop.speed{4} = patchStop_speed(stopID>=40,:);
-    patchStop.speed{2} = patchStop_speed((stopID>=20 & stopID<= 30),:);
-    patchStop.speed{1} = patchStop_speed(stopID<20,:);
-    patchStop.lick{4} = patchStop_lick(stopID>=40,:);
-    patchStop.lick{2} = patchStop_lick((stopID>=20 & stopID<= 30),:);
-    patchStop.lick{1} = patchStop_lick(stopID<20,:);
-    
-    meanpatchStop.speed{4} = mean(patchStop.speed{4});
-    meanpatchStop.speed{2} = mean(patchStop.speed{2});
-    meanpatchStop.speed{1} = mean(patchStop.speed{1});
-    meanpatchStop.lick{4} = mean(patchStop.lick{4});
-    meanpatchStop.lick{2} = mean(patchStop.lick{2});
-    meanpatchStop.lick{1} = mean(patchStop.lick{1});
-    
-    patchLeave_speed = patchLeave_speed(patchStopTrue==1,:);
-    patchLeave_lick = patchLeave_lick(patchStopTrue==1,:);
-    
-    meanLeave.speed = mean(patchStop_speed(patchStopTrue==1,:));
-    meanLeave.lick = mean(patchStop_lick(patchStopTrue==1,:));
-    
-    patchLeave.speed{4} = patchLeave_speed(stopID>=40,:);
-    patchLeave.speed{2} = patchLeave_speed((stopID>=20 & stopID<= 30),:);
-    patchLeave.speed{1} = patchLeave_speed(stopID<20,:);
-    patchLeave.lick{4} = patchLeave_lick(stopID>=40,:);
-    patchLeave.lick{2} = patchLeave_lick((stopID>=20 & stopID<= 30),:);
-    patchLeave.lick{1} = patchLeave_lick(stopID<20,:);
-    
-    meanpatchLeave.speed{4} = mean(patchLeave.speed{4});
-    meanpatchLeave.speed{2} = mean(patchLeave.speed{2});
-    meanpatchLeave.speed{1} = mean(patchLeave.speed{1});
-    meanpatchLeave.lick{4} = mean(patchLeave.lick{4});
-    meanpatchLeave.lick{2} = mean(patchLeave.lick{2});
-    meanpatchLeave.lick{1} = mean(patchLeave.lick{1});
+patchStop_lick = patchStop_lick(patchStopTrue==1,:);
+
+meanStop.speed = mean(patchStop_speed);
+meanStop.lick = mean(patchStop_lick);
+
+patchStop.speed{4} = patchStop_speed(stopID>=40,:);
+patchStop.speed{2} = patchStop_speed((stopID>=20 & stopID<= 30),:);
+patchStop.speed{1} = patchStop_speed(stopID<20,:);
+patchStop.lick{4} = patchStop_lick(stopID>=40,:);
+patchStop.lick{2} = patchStop_lick((stopID>=20 & stopID<= 30),:);
+patchStop.lick{1} = patchStop_lick(stopID<20,:);
+
+meanpatchStop.speed{4} = mean(patchStop.speed{4});
+meanpatchStop.speed{2} = mean(patchStop.speed{2});
+meanpatchStop.speed{1} = mean(patchStop.speed{1});
+meanpatchStop.lick{4} = mean(patchStop.lick{4});
+meanpatchStop.lick{2} = mean(patchStop.lick{2});
+meanpatchStop.lick{1} = mean(patchStop.lick{1});
+
+patchLeave_speed = patchLeave_speed(patchStopTrue==1,:);
+patchLeave_lick = patchLeave_lick(patchStopTrue==1,:);
+
+meanLeave.speed = mean(patchStop_speed);
+meanLeave.lick = mean(patchStop_lick);
+
+patchLeave.speed{4} = patchLeave_speed(stopID>=40,:);
+patchLeave.speed{2} = patchLeave_speed((stopID>=20 & stopID<= 30),:);
+patchLeave.speed{1} = patchLeave_speed(stopID<20,:);
+patchLeave.lick{4} = patchLeave_lick(stopID>=40,:);
+patchLeave.lick{2} = patchLeave_lick((stopID>=20 & stopID<= 30),:);
+patchLeave.lick{1} = patchLeave_lick(stopID<20,:);
+
+meanpatchLeave.speed{4} = mean(patchLeave.speed{4});
+meanpatchLeave.speed{2} = mean(patchLeave.speed{2});
+meanpatchLeave.speed{1} = mean(patchLeave.speed{1});
+meanpatchLeave.lick{4} = mean(patchLeave.lick{4});
+meanpatchLeave.lick{2} = mean(patchLeave.lick{2});
+meanpatchLeave.lick{1} = mean(patchLeave.lick{1});
 
 %% SAVE TRIAL EXTRACTION DATA
 
@@ -243,4 +244,4 @@ save('patchOn_lickspeed.mat','patchOn_speed','patchOn_lick');
 %save('patchStopLickLM.mat','patchStopLickLM');
 
 
-    
+
