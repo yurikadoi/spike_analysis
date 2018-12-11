@@ -9,7 +9,7 @@
 
 %load ADC files: 1 = speed, 2= lick sensor, 3 = reward valve, 4 = event
 %signals
-
+%%
 % 30,000 indices per second
 [ADC_data{1}, ADC_ts] = load_open_ephys_data_fast('100_ADC1.continuous');
 [ADC_data{2}] = load_open_ephys_data_fast('100_ADC2.continuous');
@@ -18,7 +18,7 @@
 
 %save('ADC_data.mat','ADC_data');
 %save('ADC_ts.mat','ADC_ts');
-
+%%
 % convert ts from s to ms and round
 ADC_ts = round(ADC_ts*1000);
 
@@ -45,7 +45,7 @@ lastPatchOn = find(ADC_data{4}>0,1, 'last');
 
 while currADC_indx < lastPatchOn
     
-    %display(currADC_indx)
+    display(currADC_indx)
     
     nextPatchOn = find(ADC_data{4}(currADC_indx+1:end)>.5,1)+currADC_indx;
     patchOn_indx = [patchOn_indx nextPatchOn];
@@ -64,9 +64,10 @@ while currADC_indx < lastPatchOn
     
     nextPatchOff1s = find(ADC_data{4}(currADC_indx+1:end)<-.5,1)+currADC_indx;
     if isempty(nextPatchOff1s)
-        %display('empty')
-        %display(nextPatchOn)
-        %display(nextpatchOnNull)
+%         display('empty')
+%         display(currADC_indx)
+%         display(nextPatchOn)
+%         display(nextpatchOnNull)
     end
     patchOff1s_indx = [patchOff1s_indx nextPatchOff1s];
     
@@ -84,7 +85,7 @@ display(length(patchOff1s_indx))
 display(length(patchStop_indx))
 display(length(patchOn_indx))
 
-
+%%
 % store timestamps for patchOn, patchStop, and patchOff
 patchOn_ts = ADC_ts(patchOn_indx);
 patchStop_ts = ADC_ts(patchStop_indx);
@@ -118,22 +119,30 @@ patchStop_speed(1,:) = zeros(1,600001);
 patchStop_lick(1,:) = zeros(1,600001);
 patchLeave_speed(1,:) = zeros(1,300001);
 patchLeave_lick(1,:) = zeros(1,300001);
-
+%%
 try
-    %for iTrial = 1:length(patchStop_indx)
-    for iTrial = 35:length(patchStop_indx)
+    for iTrial = 1:length(patchStop_indx)
+        %for iTrial = 6:length(patchStop_indx)%32/1117
+        %for iTrial = 35:length(patchStop_indx) %for 33/1115
         % making arrays of each trial based on distance from index for
         % patch on, patch stop, or patch leave
         patchOn_speed(iTrial,:) = ADC_data{1}(patchOn_indx(iTrial)-150000:patchOn_indx(iTrial)+150000);
         patchOn_lick(iTrial,:) = ADC_data{2}(patchOn_indx(iTrial)-150000:patchOn_indx(iTrial)+150000);
-        patchStop_speed(iTrial,:) = ADC_data{1}(patchStop_indx(iTrial)-150000:patchStop_indx(iTrial)+450000);
-        patchStop_lick(iTrial,:) = ADC_data{2}(patchStop_indx(iTrial)-150000:patchStop_indx(iTrial)+450000);
+        if patchStop_indx(iTrial)>1
+            patchStop_speed(iTrial,:) = ADC_data{1}(patchStop_indx(iTrial)-150000:patchStop_indx(iTrial)+450000);
+            patchStop_lick(iTrial,:) = ADC_data{2}(patchStop_indx(iTrial)-150000:patchStop_indx(iTrial)+450000);
+        else
+            %didnotstop_skipthisone = iTrial; display(didnotstop_skipthisone)
+            patchStop_speed(iTrial,:)=zeros(600001,1);
+            patchStop_lick(iTrial,:)=zeros(600001,1);
+        end
         patchLeave_speed(iTrial,:) = ADC_data{1}(patchOff1s_indx(iTrial)-150000:patchOff1s_indx(iTrial)+150000);
         patchLeave_lick(iTrial,:) = ADC_data{2}(patchOff1s_indx(iTrial)-150000:patchOff1s_indx(iTrial)+150000);
         
     end
 catch
     display(iTrial)
+    display('ATTENTION!ATTENTION!MAKE SURE THIS RAN FOR THE LAST TRIAL OF THE SESSION AND NOT EARLY')
     display('removes the last trial if not enough time after trial ends to fill the desired window')
     patchOn_speed = patchOn_speed(1:iTrial-1,:);
     patchOn_lick = patchOn_lick(1:iTrial-1,:);
@@ -153,7 +162,7 @@ catch
     
     patchStopTrue = patchStopTrue(1:iTrial-1);
 end
-
+%%
 % indices for patchOn signal to use voltage later to identify patch type
 voltsOn = ADC_data{4}(patchOn_indx);
 voltsOn20 = ADC_data{4}(patchOn_indx+20);
